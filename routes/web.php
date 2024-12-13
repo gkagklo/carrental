@@ -18,4 +18,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('users', UserController::class);
     Route::resource('brands', BrandController::class);
     Route::resource('vehicles', VehicleController::class);
+    Route::get('/vehicles/{vehicle}/edit/vehicle_images', [VehicleController::class,'editVehicleImages'])->name('vehicle_images');
+    Route::put('/vehicles/{vehicle}/edit/vehicle_images/update', [VehicleController::class, 'updateVehicleImages'])->name('updateVehicleImages');
+    Route::post('/vehicles/{vehicle}/create/vehicle_images', [VehicleController::class,'vehicleImageCreate'])->name('vehicleImageCreate');
 });

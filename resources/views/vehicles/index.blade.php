@@ -25,9 +25,8 @@ $heads = [
     'No',
     'Brand',
     'Title',
-    'Fuel Type',
-    'Year',
     'Price',
+    'Image',
     ['label' => 'Action', 'no-export' => true, 'width' => 40],
 ];
 @endphp
@@ -38,12 +37,12 @@ $heads = [
             <td>{{ $loop->iteration }}</td>
             <td>{{ $vehicle->brand->name }}</td>
             <td>{{ $vehicle->VehiclesTitle }}</td>
-            <td>{{ $vehicle->FuelType }}</td>
-            <td>{{ $vehicle->ModelYear }}</td>
             <td>{{ $vehicle->PricePerDay }}</td>
+            <td><img src="/images/{{$vehicle->primaryImage->name}}" alt="" class="img-thumbnail" width="150" height="100"></td>
             <td>
-                 <x-adminlte-button label="Show" class="btn-sm" theme="info" icon="fas fa-list" onclick="window.location='{{ route('vehicles.show',$vehicle->id) }}'" />
-                 <x-adminlte-button label="Edit" class="btn-sm" theme="primary" icon="fas fa-pen" onclick="window.location='{{ route('vehicles.edit',$vehicle->id) }}'" />
+                <x-adminlte-button label="Images" class="btn-sm" theme="warning" icon="fas fa-images" onclick="window.location='{{ route('vehicle_images',$vehicle->id) }}'"/>
+                <x-adminlte-button label="Show" class="btn-sm" theme="info" icon="fas fa-list" onclick="window.location='{{ route('vehicles.show',$vehicle->id) }}'" />
+                <x-adminlte-button label="Edit" class="btn-sm" theme="primary" icon="fas fa-pen" onclick="window.location='{{ route('vehicles.edit',$vehicle->id) }}'" />
                   <form method="POST" action="{{ route('vehicles.destroy', $vehicle->id) }}" style="display:inline">
                       @csrf
                       @method('DELETE')

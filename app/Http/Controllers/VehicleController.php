@@ -189,4 +189,72 @@ class VehicleController extends Controller
         $vehicle->delete();
         return redirect()->route('vehicles.index')->with('success','Vehicle deleted successfully');
     }
+
+    public function editVehicleImages(Vehicle $vehicle){
+        $vehicle_images = VehicleImages::where("vehicle_id", $vehicle->id)->orderBy("position")->get();
+        return view('vehicles.vehicle_images', compact('vehicle_images','vehicle'));
+    }
+
+    public function updateVehicleImages(Request $request, Vehicle $vehicle)
+    {
+        $index = 0;
+        $vehicle_images = VehicleImages::where("vehicle_id", $vehicle->id)->orderBy("position")->get();
+        foreach($vehicle_images as $vehicle_image){
+            $vehicle_image->update([
+                'position' => $request->positions[$index]
+            ]);
+            $index++;
+        }
+       
+        //Delete images on table
+        if($request->delete_images){
+            $deletedImagesIds = $request->delete_images;
+            foreach($deletedImagesIds as $imageId){
+                $image_name = VehicleImages::where('id', $imageId)->first()->name;
+                //Delete image from public folder
+                $file_path = public_path().'/images/'.$image_name;
+                File::delete($file_path);
+                VehicleImages::find($imageId)->delete();
+            }
+        }
+
+        return redirect()->back()->with('success','Vehicle images updated successfully');
+    }
+
+    public function vehicleImageCreate(Request $request, Vehicle $vehicle)
+    {
+
+        $latestPosition = $vehicle->latestImage->position;
+        
+        // Validate incoming request data
+        $request->validate([
+            'images' => 'required|array',
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+
+        // Initialize an array to store image information
+        $images = [];
+
+        // Process each uploaded image
+        foreach($request->file('images') as $image) {
+            $latestPosition++;
+            // Generate a unique name for the image
+            $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+              
+            // Move the image to the desired location
+            $image->move(public_path('images'), $imageName);
+  
+            // Add image information to the array
+            $images[] = ['name' => $imageName, 'vehicle_id' => $vehicle->id, 'position' => $latestPosition];
+        }
+  
+        // Store images in the database using create method
+        foreach ($images as $imageData) {
+            VehicleImages::create($imageData);
+        }
+
+        return redirect()->back()->with('success','Vehicle images added successfully');
+    }
+
+
 }

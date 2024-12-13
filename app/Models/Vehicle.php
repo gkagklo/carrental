@@ -38,6 +38,11 @@ class Vehicle extends Model
         return $this->hasOne(VehicleImages::class)->oldestOfMany('position');
     }
 
+    public function latestImage()
+    {
+        return $this->hasOne(VehicleImages::class)->latestOfMany('position');
+    }
+
     public function brand()
     {
         return $this->belongsTo(Brand::class);
